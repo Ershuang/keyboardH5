@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="style/keyboard.css">
+	<style type="text/css">
+		*{padding:0;margin:0;}
+		html{height: 100%;}
+		body{font-size:14px;font-family: 'PingFangSC-Medium';color:#666666;height: 100%;}
+		input,button{border:none;outline:none;color:#000000;font-size:18px;text-align: right;}
+		input::-webkit-input-placeholder{color:#cccccc;font-size: 14px;}
+		#app{width: 100%;min-height: 100vh;background-color: #f3f2f0;overflow: hidden;}
+		.container{width:100%;margin:0 auto; overflow: hidden;}
+		.header{display: flex;justify-content: center;height: 40px;align-items: center;}
+		.paycontent{}
+		.heighLight{width:10rem;height:2.85rem;text-align: right;line-height: 2.85rem;
+			border-right: 1px solid rgba(153,153,153,.9);
+			/*border:1px solid rgba(0,169,238,.5) ;
+			border-radius: 10px;*/
+		}
+		.paycontent .num{width: 20rem;height: 9rem;background-color: #ffffff;border-radius:10px;border:1px solid #e5e5e5;display: block;margin:0 auto;overflow: hidden;}
+		.paycontent .num input{text-align: right;width: 190px;}
+		.paycontent .num div{height: 4.25rem;line-height: 4.25rem;}
+		
+		.inputbox{display: flex;justify-content: space-between;margin-left: 15px;padding-right: 10px;background-color: #ffffff;}
+		
+		.paycontent .num label{color: #000000;}
+		.money1{border-bottom: 1px solid #e5e5e5;display: flex;align-items: center;color:#000;}
+		.money2{display: flex;align-items: center;color:#000;}
+		/*.remark{width:345px;height:60px;margin:0 auto;position: relative;}*/
+		.remark-btn{width:20rem;height: 20px;display: flex;justify-content: flex-start;padding: 15px 0px;margin:0 auto;}
+
+		.fade-enter-active, .fade-leave-active{
+			transition: opacity .5s;
+		}
+		.fade-enter, .fade-leave-to{
+			opacity: 0;
+		}
+		.remarkShow{height:2.94rem;line-height: 2.94rem;margin:10px auto;width:20rem;border-radius: 10px;border:1px solid #e5e5e5;
+			    display: flex;justify-content: space-between;background-color: #fff;overflow: hidden;}
+		.remarkShow label{margin-left:15px;}
+
+		.paynum-warrper{width:20rem;height:50px;line-height: 50px; margin:0 auto;display: flex;justify-content: space-between;/*margin-left: 15px;padding-right: 10px;margin-top: 20px;*/border-top: 1px solid #e5e5e5;}
+		.paynum-warrper p{color:#000000;}
+		.paynum-warrper span{color:#e96b6a;font-size:20px;}
+		
+
+		.submit{width:20rem;height:45px;background-color: #e96b6a;color:#ffffff;text-align: center;opacity: 0.5;display: block;margin:0 auto;border-radius: 10px;}
+	</style>
+</head>
+<body>
+	<div id='app'>
+		<div class="container">
+			<div class='header'>
+				<img src='img/icon.png' / width="12px" height="15px">
+				<p>丰翔路3133号</p>
+			</div>
+			<div class="paycontent">
+				<form id='mainForm' method="post">
+					<div class='num'>
+						<div class='money1 inputbox'>
+							<span>订单金额(元)</span>
+							<label id="paymoney" type="text"></label>
+						</div>
+						<div class="money2 inputbox">
+							<span>不参与优惠金额(元)</span>
+							<label id="discount" type="text" ></label>
+						</div>
+						<!-- <div class='money1 inputbox'>
+							<label for="money1">订单金额(元)</label>
+							<input type="number" name="money1" id="money1" class="capital mui-input-clear" placeholder="请询问服务员后输入" step="0.00" style="font-size: 20px;" v-model="money">
+						</div> -->
+						<!-- <div class='money2 inputbox'>
+							<label for="money2">不参与优惠金额(元)</label>
+							<input type="number" name="money2" id="money2" class="capital2 mui-input-clear" placeholder="请询问服务员后输入"  style="font-size: 18px;">
+						</div> -->
+					</div>
+					<!-- <div class="remark"> -->
+						<div class='remark-btn' v-on:click='show =!show' v-if='!show'>
+							<img src="img/remark_03.png" width="12px" height="15px">
+							<p>添加备注</p>
+						</div>
+						<transition name='fade'>
+							<div class='remarkShow ' v-show='show'>
+								<label for='remark'>备注</label>
+								<input id='remark' type="text" name="remark" maxlength="12" placeholder="如房间号、服务员号等" >
+							</div>
+						</transition>
+					<!-- </div> -->
+					<div class='paynum-warrper' v-if='moneys'>
+						<p>实际付款(元)</p>
+						<span class='moneys'>{{getArr()}}</span>
+						
+					</div>
+					<button type='submit' class="submit" >和店员已确认，立刻买单</button>
+				</form>
+			</div>
+			
+		</div>
+		<div class='payinfo'>
+			<table cellpadding="0" cellspacing="0" class="none">
+				<tr>
+					<td class="paynum">1</td>
+					<td class="paynum">2</td>
+					<td class="paynum">3</td>
+					<td id='pay-return'>
+						<div class="keybord-return"></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="paynum">4</td>
+					<td class="paynum">5</td>
+					<td class="paynum">6</td>
+					<td rowspan="3" class="pay" id="submit">
+						<a href="javascript:return false;">
+							<div class="a-pay">
+								<!-- <p>确认</p>
+								<p>支付</p> -->
+								<p>完成</p>
+							</div>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="paynum">7</td>
+					<td class="paynum">8</td>
+					<td class="paynum">9</td>
+				</tr>
+				<tr>
+					<td id='pay-zero' colspan="2" class="payzero">0</td>
+					<td id='pay-float'>.</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<script src='js/vue.js'></script>
+	<script src="js/jquery.min.js"></script>
+	<script src='js/zepto.js'></script>
+	<script src='js/keyboard.js'></script>
+	<script type="text/javascript">
+		var app = new Vue({
+			el:'#app',
+			data:{
+				message:'hello',
+				show:false,
+				money:'',
+				moneys:false,
+				
+			},
+			methods:{
+				getArr:function(){
+						// return Number(this.money).toFixed(2); 
+						return this.money.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');           
+				},
+			},
+
+		});
+		
+		$(function(){
+
+		})
+		// $(function(){
+		// 	// alert("!!!!!!")
+		// 	var u = navigator.userAgent,app = navigator.appVersion;
+		// 	var isAndroid = u.indexOf('Android') > -1 || u.indexOf('linux') > 1;
+		// 	var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+		// 	if(isAndroid){
+				
+		// 	}
+		// 	if(isIOS){
+		// 		alert("!!!")
+		// 		$('.capital').focus(function(){
+		// 			if(this.value === '0.00'){
+		// 				this.value = '';
+		// 			}else{
+		// 				this.value = this.value.replace(/\.00/,'').replace(/(\.\d)0/,'$1');
+		// 			}
+		// 		}).keyup(function(){
+		// 			this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
+		// 			this.value = this.value.replace(/^[\.]/,'').replace(/[^\d.]/g,'');
+		// 		});
+		// 	}
+		// })
+		// var precapital;
+		// $('#money1').keyup(function(){
+		// 	// this.value = this.value.replace(/^[\.]/,'').replace(/[^\d.]/g,'');
+		// 	if(this.value === ''){
+		// 	 	console.log(app.$data.moneys)
+		// 	 	app.$data.moneys = false;
+		//      	document.querySelector('.submit').style.opacity = 0.5; 
+
+		//     }else{
+		//     	app.$data.moneys = true;
+		//      	document.querySelector('.submit').style.opacity = 1;
+		//     }
+		// }).blur(function(){
+		// 	this.value = this.value.replace(/[\.]$/, '');
+		//     this.value = this.value.replace(/(.*)\.([\d]{2})(\d*)/g,'$1.$2');
+		//     // this.value = Number(this.value).toFixed(2);
+		//      var logNum = this.value.toString();
+		//      if(logNum.match(/\./g) != null){
+		//          integerNum = parseInt(logNum).toString().replace(/\d(?=(\d{3})+$)/g,'$&,');
+		//          decimalNum = '.' + logNum.replace(/(.*)\.(.*)/g,'$2');
+		         
+		//      }else{
+		        
+		//      }
+		//  });
+		
+	
+		//  $('.submit').click(function(){
+  //           $.ajax({
+  //               url: '', //提交接口url
+  //               type: "post",
+  //               data: $('#mainForm').serialize(), //表单的序列化
+  //               success:function(res){
+                   
+  //            		//成功的回调函数
+  //               }
+  //           })
+  //       })
+
+
+	</script>
+</body>
+</html>

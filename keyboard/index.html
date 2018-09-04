@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <link rel="stylesheet" type="text/css" href="style/pay.css">
+    <link rel="stylesheet" type="text/css" href="style/keyboard.css">
+	<title></title>
+</head>
+<body>
+	<div class="container">
+		<header class="alipay">
+			<img src="img/iconzhifubao.png" width="60px" height="60px">
+		</header>
+		<main>
+			<div class='payee'>
+				<p>收款人</p>
+				<span>人民广场海底捞海底捞</span>
+			</div>
+			<form action="">
+				<div class="pay1">
+					<p>付款金额</p>
+					<span>￥</span>
+					<label id="paymoney" type="text" class="heighLight"></label>
+					<!-- <label for='num'>￥</label> -->
+					<!-- <input type="number" name="num" id="num"  class="capital mui-input-clear"> -->
+					
+				</div>
+				<div class="remark">
+					<input type="text" name="text" id="text" class='text' placeholder="添加备注">
+				</div>
+				<!-- <button type='submit' class="submit alipay"  onclick="validMoney()">确定支付</button> -->
+			</form>
+		</main>
+	
+		<div class='payinfo'>
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="paynum">1</td>
+					<td class="paynum">2</td>
+					<td class="paynum">3</td>
+					<td id='pay-return'>
+						<div class="keybord-return"></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="paynum">4</td>
+					<td class="paynum">5</td>
+					<td class="paynum">6</td>
+					<td rowspan="3" class="pay" id="submit">
+						<a href="javascript:return false;">
+							<div class="a-pay">
+								<p>确认</p>
+								<p>支付</p>
+							</div>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="paynum">7</td>
+					<td class="paynum">8</td>
+					<td class="paynum">9</td>
+				</tr>
+				<tr>
+					<td id='pay-zero' colspan="2" class="payzero">0</td>
+					<td id='pay-float'>.</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+<!-- <script src="js/jquery.js"></script> -->
+<script src='js/zepto.js'></script>
+<script type="text/javascript">
+	Zepto(function($){
+		var $paymoney = $("#paymoney");
+		// 大写金额
+		var upperCaseMoney = $('.upper-case span');
+		$("#paymoney").focus(function(){
+			$(".payinfo").slideDown();
+       		document.activeElement.blur();
+		});
+		$(".paynum").each(function(){
+			$(this).on('touchend',function(e){
+				e.preventDefault();
+				if(($paymoney.text()).indexOf(".") != -1 && ($paymoney.text()).substring(($paymoney.text()).indexOf(".") + 1, ($paymoney.text()).length).length == 2){
+					return;
+				}
+				if($.trim($paymoney.text()) == "0"){
+					return;
+				}
+				if (parseInt($paymoney.text()) > 10000 && $paymoney.text().indexOf(".") == -1) {
+					return;
+				}
+				// $('.pay').removeClass('pay-disabled').find('a').attr('href','pay-result.html');
+				$('.pay').removeClass('pay-disabled');
+				// $('.pay').click(function(){
+				// 	alert($paymoney.text())
+				// })
+				$paymoney.text($paymoney.text() + $(this).text());
+				// upperCaseMoney.text(digitUppercase($paymoney.text()));
+			});
+		});
+		$("#pay-return").on('touchend',function(e){
+			$paymoney.text(($paymoney.text()).substring(0, ($paymoney.text()).length - 1));
+			// upperCaseMoney.text(digitUppercase($paymoney.text()));
+			if (!$paymoney.text()) {
+				upperCaseMoney.text('');
+				// $('.pay').addClass('pay-disabled').find('a').attr('href', 'javascript:return false;');
+				$('.pay').addClass('pay-disabled');
+
+
+			}
+			e.preventDefault();
+		});
+		$("#pay-zero").on('touchend',function(e){
+			e.preventDefault();
+			if(($paymoney.text()).indexOf(".") != -1 && ($paymoney.text()).substring(($paymoney.text()).indexOf(".") + 1, ($paymoney.text()).length).length == 2){
+				return;
+			}
+			if($.trim($paymoney.text()) == "0"){
+				return;
+			}
+			if (parseInt($paymoney.text()) > 10000 && $paymoney.text().indexOf(".") == -1) {
+				return;
+			}
+			$paymoney.text($paymoney.text() + $(this).text());
+		});
+		$("#pay-float").on('touchend',function(e){
+			e.preventDefault();
+			if($.trim($paymoney.text()) == ""){
+				return;
+			}
+		
+			if(($paymoney.text()).indexOf(".") != -1){
+				return;
+			}
+			
+			if(($paymoney.text()).indexOf(".") != -1){
+				return;
+			}
+			
+			$paymoney.text($paymoney.text() + $(this).text());
+		});
+		$('input').focus(function(){
+			// console.log('focus');
+			$('table').addClass('none');
+		})
+		$('input').blur(function(){
+			// console.log('blur');
+			$('table').removeClass('none');
+		})
+		if (!$paymoney.text()) {
+			$('.pay').addClass('pay-disabled');
+		}
+		$('#submit').on('touchend',function(e){
+			$.ajax({
+				url:location.href,
+				type:'post',
+				data:$paymoney.text(),
+				success:function(res){
+
+				},
+				function(data){
+
+				}
+			})
+		})
+	});
+</script>
+</html>
